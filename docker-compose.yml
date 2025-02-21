@@ -1,0 +1,38 @@
+name: summitv3
+
+networks:
+  summitv3:
+
+services:
+  app:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: summitv3-api
+    restart: unless-stopped
+    working_dir: /www
+    ports:
+      - "8000:8000" #symfony
+      - "9033:9003" #xdebug
+    volumes:
+      - ./:/www
+    networks:
+      - summitv3
+    depends_on:
+      postgres:
+        condition:  service_started
+
+  postgres:
+    image: postgres:17.2
+    container_name: summitv3-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
+    volumes:
+      - ./docker-compose/postgres/data:/var/lib/postgresql/data:rw
+    networks:
+      - summitv3
