@@ -14,17 +14,13 @@ final class UserController extends AbstractController
     public function getAllUser(UserRepository $userRepository): JsonResponse
     {
         $usersList = $userRepository->findAll();
-        return $this->json([
-            'data' => $usersList
-        ]);
+        return $this->json($usersList);
     }
 
     #[Route('/{id}', name: 'app_user_get_one', methods: ['GET'])]
     public function getOneUser(int $id, UserRepository $userRepository): JsonResponse
     {
         $user = $userRepository->findOneBy(['id' => $id]);
-        return $this->json([
-            'data' => $user
-        ]);
+        return $this->json($user);
     }
 }
