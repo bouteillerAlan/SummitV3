@@ -41,3 +41,11 @@ symfony server:start --allow-all-ip
 docker exec -u root -it summitv3-api /bin/bash
 symfony server:ca:install
 ```
+
+## Fixtures
+
+Fixtures have been implemented so use it :) 
+
+```shell
+symfony console doctrine:fixtures:load
+```

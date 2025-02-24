@@ -32,7 +32,7 @@ final class UserFactory extends PersistentProxyObjectFactory
         return [
             'email' => self::faker()->email(),
             'password' => self::faker()->password(),
-            'roles' => ['ROLE_USER'], // todo: add role enum
+            'roles' => ['ROLE_USER'],
         ];
     }
 

@@ -29,10 +29,12 @@ final class TrainingFactory extends PersistentProxyObjectFactory
      */
     protected function defaults(): array|callable
     {
+        // todo: create random from 0 to 50 training for each user
+        //       actually this code create 500 users + the 1k from the user factory
         return [
             'date' => self::faker()->dateTime(),
             'name' => self::faker()->sentence(3),
-            'user' => UserFactory::new(), // todo: check link
+            'user' => UserFactory::new(),
         ];
     }
 
