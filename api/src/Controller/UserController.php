@@ -15,7 +15,7 @@ final class UserController extends AbstractController
     #[Route('/', name: 'app_user_get_all', methods: ['GET'])]
     public function getAllUser(UserRepository $userRepository, SerializerInterface $serializer): JsonResponse
     {
-        $usersList = $userRepository->findAll();
+        $usersList = $userRepository->findAllPaginated('id');
         return $this->json($serializer->serialize($usersList, 'json', ['groups' => 'getAllUsers']));
     }
 

@@ -15,7 +15,7 @@ final class TrainingController extends AbstractController
     #[Route('/', name: 'app_training_get_all', methods: ['GET'])]
     public function getAllTraining(TrainingRepository $trainingRepository, SerializerInterface $serializer): JsonResponse
     {
-        $trainings = $trainingRepository->findAll();
+        $trainings = $trainingRepository->findAllPaginated('id');
         return $this->json($serializer->serialize($trainings, 'json', ['groups' => 'getAllTrainings']));
     }
 
