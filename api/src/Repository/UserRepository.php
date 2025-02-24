@@ -4,9 +4,13 @@ namespace App\Repository;
 
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
@@ -46,5 +50,13 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getQuery();
 
         return (new Pagerfanta(new QueryAdapter($query)))->setMaxPerPage(25);
+    }
+
+    #[Route('/{id}', name: 'app_user_delete_one', methods: ['DELETE'])]
+    public function deleteOneUser(User $user, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $entityManager->remove($user);
+        $entityManager->flush();
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 }
