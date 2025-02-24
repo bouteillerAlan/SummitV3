@@ -2,16 +2,14 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\User;
+use App\Factory\UserFactory;
+use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
-class UserFixtures extends BaseFixtures
+class UserFixtures extends Fixture
 {
-    public function loadData(ObjectManager $manager): void
+    public function load(ObjectManager $manager): void
     {
-        $this->createMany(User::class, 10, function (User $user, $count) {
-            $user->setEmail($this->faker->email());
-            $user->setPassword($this->faker->password());
-        });
+        UserFactory::createMany(1000);
     }
 }

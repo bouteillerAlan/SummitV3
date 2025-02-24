@@ -2,21 +2,15 @@
 
 namespace App\DataFixtures;
 
-use App\DataFixtures\BaseFixtures;
-use App\Entity\Training;
-use App\Entity\User;
+use App\Factory\TrainingFactory;
+use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
-class TrainingFixtures extends BaseFixtures
+class TrainingFixtures extends Fixture
 {
 
-    protected function loadData(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
-        $this->createMany(Training::class, 10, function (Training $training, $count) {
-            $training->setDate($this->faker->dateTime());
-            $training->setName($this->faker->name());
-            $training->setUser($this->getReference());
-            // todo: 'User_' . $this->faker->randomDigitNotNull()
-        });
+        TrainingFactory::createMany(500);
     }
 }
