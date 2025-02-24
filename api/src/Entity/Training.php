@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\TrainingRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: TrainingRepository::class)]
 class Training
@@ -12,9 +13,11 @@ class Training
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['getAllTrainings', 'getOneTraining', 'getAllUsers', 'getOneUser'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['getAllTrainings', 'getOneTraining', 'getAllUsers', 'getOneUser'])]
     private ?string $name = null;
 
     #[ORM\ManyToOne(inversedBy: 'training')]
@@ -22,6 +25,7 @@ class Training
     private ?User $user = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(['getAllTrainings', 'getOneTraining', 'getAllUsers', 'getOneUser'])]
     private ?\DateTimeInterface $date = null;
 
     public function getId(): ?int

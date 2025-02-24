@@ -2,25 +2,28 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('/user')]
 final class UserController extends AbstractController
 {
     #[Route('/', name: 'app_user_get_all', methods: ['GET'])]
-    public function getAllUser(UserRepository $userRepository): JsonResponse
+    public function getAllUser(UserRepository $userRepository, SerializerInterface $serializer): JsonResponse
     {
         $usersList = $userRepository->findAll();
-        return $this->json($usersList);
+        return $this->json($serializer->serialize($usersList, 'json', ['groups' => 'getAllUsers']));
     }
 
     #[Route('/{id}', name: 'app_user_get_one', methods: ['GET'])]
-    public function getOneUser(int $id, UserRepository $userRepository): JsonResponse
+    public function getOneUser(User $user, SerializerInterface $serializer): JsonResponse
     {
-        $user = $userRepository->findOneBy(['id' => $id]);
-        return $this->json($user);
+        // reminder : EntityValueResolver automatically fetch the right ID
+        //            and set the http response code
+        return $this->json($serializer->serialize($user, 'json', ['groups' => 'getOneUser']));
     }
 }
