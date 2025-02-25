@@ -40,7 +40,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Training>
      */
-    #[ORM\OneToMany(targetEntity: Training::class, mappedBy: 'user')]
+    #[ORM\OneToMany(targetEntity: Training::class, mappedBy: 'user', cascade: ['remove'])]
     #[Groups(['getAllUsers', 'getOneUser'])]
     private Collection $training;
 
