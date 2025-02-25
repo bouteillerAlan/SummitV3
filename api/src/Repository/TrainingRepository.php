@@ -7,15 +7,20 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @extends ServiceEntityRepository<Training>
  */
 class TrainingRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    protected ValidatorInterface $validator;
+
+    public function __construct(ManagerRegistry $registry, ValidatorInterface $validator)
     {
         parent::__construct($registry, Training::class);
+        $this->validator = $validator;
     }
 
     /**
@@ -39,12 +44,26 @@ class TrainingRepository extends ServiceEntityRepository
 
     /**
      * create one Training
+     * /!\ without validating by validator
      * @param Training $training
      * @return void
      */
     public function createOneTraining(Training $training): void
     {
-        // todo: implement this
+        $this->getEntityManager()->persist($training);
+        $this->getEntityManager()->flush();
+    }
+
+    /**
+     * validate Training data, return null if the data is correct otherwise the errors
+     * @param Training $training
+     * @return bool|ConstraintViolationListInterface
+     */
+    public function validateTraining(Training $training): null|ConstraintViolationListInterface
+    {
+        $errors = $this->validator->validate($training);
+        if ($errors->count() > 0) return $errors;
+        return null;
     }
 
     /**

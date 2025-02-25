@@ -10,8 +10,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/training')]
 final class TrainingController extends AbstractController
@@ -24,28 +24,34 @@ final class TrainingController extends AbstractController
     }
 
     #[Route('', name: 'app_training_create_one', methods: ['POST'])]
-    public function createOneTraining(
-        Request $request, SerializerInterface $serializer,
-        UserRepository $userRepository, ValidatorInterface $validator
-    ): JsonResponse
+    public function createOneTraining(Request $request, SerializerInterface $serializer, UserRepository $userRepository, TrainingRepository $trainingRepository, UrlGeneratorInterface $urlGenerator): JsonResponse
     {
         // get the data from the request
         $newTraining = $serializer->deserialize($request->getContent(), Training::class, 'json');
 
         // validate the data
-        $errors = $validator->validate($newTraining);
-        if ($errors->count() > 0) return new JsonResponse(
-            $serializer->serialize($errors, 'json'),
-            Response::HTTP_BAD_REQUEST,
-            [],
-            true
-        );
+        $dataIsValid = $trainingRepository->validateTraining($newTraining);
+        if ($dataIsValid !== null) {
+            return new JsonResponse($serializer->serialize($dataIsValid, 'json'), Response::HTTP_BAD_REQUEST, [], true);
+        }
 
         // map the right User from the id given in request
+        // fixme: later use the id stored in the auth
         $userId = $request->toArray()['user'] ?? null;
-        $newTraining->setUser($userRepository->find($userId));
+        $user = $userRepository->find($userId);
+        if ($user === null) {
+            return new JsonResponse($serializer->serialize('User doesn\'t exist', 'json'), Response::HTTP_BAD_REQUEST, [], true);
+        }
+        $newTraining->setUser($user);
 
-        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
+        // build the response
+        $jsonTraining = $serializer->serialize($newTraining, 'json', ['groups' => 'getOneTraining']);
+        $location = $urlGenerator->generate('app_training_get_one', ['id' => $newTraining->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        // create the training in the db
+        $trainingRepository->createOneTraining($newTraining);
+
+        return new JsonResponse($jsonTraining, Response::HTTP_CREATED, ["Location" => $location], true);
     }
 
     #[Route('/{id}', name: 'app_training_get_one', methods: ['GET'])]
