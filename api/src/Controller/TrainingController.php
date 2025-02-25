@@ -13,7 +13,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 #[Route('/training')]
 final class TrainingController extends AbstractController
 {
-    #[Route('/', name: 'app_training_get_all', methods: ['GET'])]
+    #[Route('', name: 'app_training_get_all', methods: ['GET'])]
     public function getAllTraining(TrainingRepository $trainingRepository, SerializerInterface $serializer): JsonResponse
     {
         $trainings = $trainingRepository->findAllPaginated('id');

@@ -14,7 +14,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 #[Route('/user')]
 final class UserController extends AbstractController
 {
-    #[Route('/', name: 'app_user_get_all', methods: ['GET'])]
+    #[Route('', name: 'app_user_get_all', methods: ['GET'])]
     public function getAllUser(UserRepository $userRepository, SerializerInterface $serializer): JsonResponse
     {
         $usersList = $userRepository->findAllPaginated('id');
