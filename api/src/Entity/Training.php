@@ -6,6 +6,7 @@ use App\Repository\TrainingRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TrainingRepository::class)]
 class Training
@@ -18,14 +19,20 @@ class Training
 
     #[ORM\Column(length: 255)]
     #[Groups(['getAllTrainings', 'getOneTraining', 'getAllUsers', 'getOneUser'])]
+    #[Assert\Type(type: 'string', message: 'Name must be string')]
+    #[Assert\NotBlank(message: 'Name is mandatory')]
+    #[Assert\Length(min: 1, max: 255, minMessage: 'Name must be between 1 and 255 characters', maxMessage: 'Name must be between 1 and 255 characters')]
     private ?string $name = null;
 
     #[ORM\ManyToOne(inversedBy: 'training')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotBlank(message: 'User is mandatory')]
     private ?User $user = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Groups(['getAllTrainings', 'getOneTraining', 'getAllUsers', 'getOneUser'])]
+    #[Assert\NotBlank(message: 'Date is mandatory')]
+    #[Assert\DateTime(message: 'Date must be a DateTime')]
     private ?\DateTimeInterface $date = null;
 
     public function getId(): ?int

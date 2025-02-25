@@ -38,6 +38,12 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
+    /**
+     * get the full list of User
+     * paginated via Pagerfanta, 25 items per page
+     * @param string $field
+     * @return Pagerfanta
+     */
     public function findAllPaginated(string $field): Pagerfanta
     {
         // avoid to use unknown field
@@ -51,6 +57,11 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return (new Pagerfanta(new QueryAdapter($query)))->setMaxPerPage(25);
     }
 
+    /**
+     * delete one User and all the related Training
+     * @param User $user
+     * @return void
+     */
     public function deleteOneUser(User $user): void
     {
         $this->getEntityManager()->remove($user);

@@ -18,6 +18,12 @@ class TrainingRepository extends ServiceEntityRepository
         parent::__construct($registry, Training::class);
     }
 
+    /**
+     * get the full list of Training
+     * paginated via Pagerfanta, 25 items per page
+     * @param string $field
+     * @return Pagerfanta
+     */
     public function findAllPaginated(string $field): Pagerfanta
     {
         // avoid to use unknown field
@@ -31,6 +37,21 @@ class TrainingRepository extends ServiceEntityRepository
         return (new Pagerfanta(new QueryAdapter($query)))->setMaxPerPage(25);
     }
 
+    /**
+     * create one Training
+     * @param Training $training
+     * @return void
+     */
+    public function createOneTraining(Training $training): void
+    {
+        // todo: implement this
+    }
+
+    /**
+     * delete one Training
+     * @param Training $training
+     * @return void
+     */
     public function deleteOneTraining(Training $training): void
     {
         $this->getEntityManager()->remove($training);
