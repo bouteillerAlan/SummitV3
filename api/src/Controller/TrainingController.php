@@ -54,6 +54,12 @@ final class TrainingController extends AbstractController
         return new JsonResponse($jsonTraining, Response::HTTP_CREATED, ["Location" => $location], true);
     }
 
+    // todo: 25/02
+    // todo: edit a training
+    // todo: create and edit a user
+    // todo: check l'auth w/ jwt
+    // todo: add caching
+
     #[Route('/{id}', name: 'app_training_get_one', methods: ['GET'])]
     public function getOneTraining(Training $training, SerializerInterface $serializer): JsonResponse
     {
