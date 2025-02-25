@@ -1,0 +1,5 @@
+- [ ] edit a training
+- [ ] create a user
+- [ ] edit a user
+- [ ] check l'auth w/ jwt
+- [ ] add caching

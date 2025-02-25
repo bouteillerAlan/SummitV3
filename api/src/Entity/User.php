@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enums\RolesEnums;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -9,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -23,18 +25,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 180)]
     #[Groups(['getAllUsers', 'getOneUser'])]
+    #[Assert\Email(message: 'Email should be a valid email')]
     private ?string $email = null;
 
     /**
-     * @var list<string> The user roles
+     * @var RolesEnums[] The user roles
      */
-    #[ORM\Column]
-    private array $roles = [];
+    #[ORM\Column(type: "enum", enumType: RolesEnums::class)]
+    #[Assert\NotBlank(message: 'Roles is mandatory')]
+    #[Assert\Type(type: RolesEnums::class)]
+    private array $roles = [RolesEnums::ROLE_USER];
 
     /**
      * @var string The hashed password
      */
     #[ORM\Column]
+    #[Assert\NotBlank(message: 'Password is mandatory')]
+    #[Assert\PasswordStrength(minScore: Assert\PasswordStrength::STRENGTH_MEDIUM, message: 'Password to weak')]
     private ?string $password = null;
 
     /**

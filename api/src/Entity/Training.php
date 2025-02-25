@@ -31,7 +31,7 @@ class Training
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Groups(['getAllTrainings', 'getOneTraining', 'getAllUsers', 'getOneUser'])]
-    // fixme
+    // fixme: this assert throw string error for some reason
     //#[Assert\DateTime(message: 'Date must be a DateTime')]
     private ?\DateTimeInterface $date = null;
 

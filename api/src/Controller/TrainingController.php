@@ -16,6 +16,12 @@ use Symfony\Component\Serializer\SerializerInterface;
 #[Route('/training')]
 final class TrainingController extends AbstractController
 {
+    /**
+     * get all the training stored in the DB
+     * @param TrainingRepository $trainingRepository
+     * @param SerializerInterface $serializer
+     * @return JsonResponse
+     */
     #[Route('', name: 'app_training_get_all', methods: ['GET'])]
     public function getAllTraining(TrainingRepository $trainingRepository, SerializerInterface $serializer): JsonResponse
     {
@@ -23,7 +29,28 @@ final class TrainingController extends AbstractController
         return $this->json($serializer->serialize($trainings, 'json', ['groups' => 'getAllTrainings']));
     }
 
-    #[Route('', name: 'app_training_create_one', methods: ['POST'])]
+    /**
+     * get one training via is ID
+     * @param Training $training
+     * @param SerializerInterface $serializer
+     * @return JsonResponse
+     */
+    #[Route('/{id}', name: 'app_training_get_one', methods: ['GET'])]
+    public function getOneTraining(Training $training, SerializerInterface $serializer): JsonResponse
+    {
+        return $this->json($serializer->serialize($training, 'json', ['groups' => 'getOneTraining']));
+    }
+
+    /**
+     * create a training after validating is data
+     * @param Request $request
+     * @param SerializerInterface $serializer
+     * @param UserRepository $userRepository
+     * @param TrainingRepository $trainingRepository
+     * @param UrlGeneratorInterface $urlGenerator
+     * @return JsonResponse
+     */
+    #[Route('', name: 'app_training_create', methods: ['POST'])]
     public function createOneTraining(Request $request, SerializerInterface $serializer, UserRepository $userRepository, TrainingRepository $trainingRepository, UrlGeneratorInterface $urlGenerator): JsonResponse
     {
         // get the data from the request
@@ -54,19 +81,28 @@ final class TrainingController extends AbstractController
         return new JsonResponse($jsonTraining, Response::HTTP_CREATED, ["Location" => $location], true);
     }
 
-    // todo: 25/02
-    // todo: edit a training
-    // todo: create and edit a user
-    // todo: check l'auth w/ jwt
-    // todo: add caching
-
-    #[Route('/{id}', name: 'app_training_get_one', methods: ['GET'])]
-    public function getOneTraining(Training $training, SerializerInterface $serializer): JsonResponse
+    /**
+     * update a training via is ID
+     * @param Request $request
+     * @param SerializerInterface $serializer
+     * @param UserRepository $userRepository
+     * @param TrainingRepository $trainingRepository
+     * @param UrlGeneratorInterface $urlGenerator
+     * @return JsonResponse
+     */
+    #[Route('/{id}', name: 'app_training_update', methods: ['PUT'])]
+    public function updateOneTraining(Request $request, SerializerInterface $serializer, UserRepository $userRepository, TrainingRepository $trainingRepository, UrlGeneratorInterface $urlGenerator): JsonResponse
     {
-        return $this->json($serializer->serialize($training, 'json', ['groups' => 'getOneTraining']));
+        //
     }
 
-    #[Route('/{id}', name: 'app_training_delete_one', methods: ['DELETE'])]
+    /**
+     * delete a training via is ID
+     * @param Training $training
+     * @param TrainingRepository $trainingRepository
+     * @return JsonResponse
+     */
+    #[Route('/{id}', name: 'app_training_delete', methods: ['DELETE'])]
     public function deleteOneTraining(Training $training, TrainingRepository $trainingRepository): JsonResponse
     {
         $trainingRepository->deleteOneTraining($training);
