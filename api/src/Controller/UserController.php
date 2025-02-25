@@ -4,8 +4,10 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -25,5 +27,12 @@ final class UserController extends AbstractController
         // reminder : EntityValueResolver automatically fetch the right ID
         //            and set the http response code
         return $this->json($serializer->serialize($user, 'json', ['groups' => 'getOneUser']));
+    }
+
+    #[Route('/{id}', name: 'app_user_delete_one', methods: ['DELETE'])]
+    public function deleteOneUser(User $user, UserRepository $userRepository): JsonResponse
+    {
+        $userRepository->deleteOneUser($user);
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 }

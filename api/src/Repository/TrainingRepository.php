@@ -4,7 +4,6 @@ namespace App\Repository;
 
 use App\Entity\Training;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
@@ -30,5 +29,11 @@ class TrainingRepository extends ServiceEntityRepository
             ->getQuery();
 
         return (new Pagerfanta(new QueryAdapter($query)))->setMaxPerPage(25);
+    }
+
+    public function deleteOneTraining(Training $training): void
+    {
+        $this->getEntityManager()->remove($training);
+        $this->getEntityManager()->flush();
     }
 }

@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Training;
 use App\Repository\TrainingRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,10 +27,9 @@ final class TrainingController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_training_delete_one', methods: ['DELETE'])]
-    public function deleteOneTraining(Training $training, EntityManagerInterface $entityManager): JsonResponse
+    public function deleteOneTraining(Training $training, TrainingRepository $trainingRepository): JsonResponse
     {
-        $entityManager->remove($training);
-        $entityManager->flush();
+        $trainingRepository->deleteOneTraining($training);
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 }
