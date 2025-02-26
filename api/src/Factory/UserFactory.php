@@ -3,6 +3,8 @@
 namespace App\Factory;
 
 use App\Entity\User;
+use App\Enums\RolesEnums;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
 /**
@@ -10,12 +12,11 @@ use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
  */
 final class UserFactory extends PersistentProxyObjectFactory
 {
-    /**
-     * @see https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#factories-as-services
-     *
-     */
-    public function __construct()
+    private UserPasswordHasherInterface $userPasswordHasher;
+
+    public function __construct(UserPasswordHasherInterface $userPasswordHasher)
     {
+        $this->userPasswordHasher = $userPasswordHasher;
     }
 
     public static function class(): string
@@ -42,7 +43,12 @@ final class UserFactory extends PersistentProxyObjectFactory
     protected function initialize(): static
     {
         return $this
-            // ->afterInstantiate(function(User $user): void {})
+            ->afterInstantiate(function(User $user): void {
+                // hash the password
+                $user->setPassword($this->userPasswordHasher->hashPassword($user, $user->getPassword()));
+                // set some user to admin role
+                if (self::faker()->numberBetween(1, 100) % 3 === 0) $user->setRoles([RolesEnums::ROLE_ADMIN]);
+            })
         ;
     }
 }
