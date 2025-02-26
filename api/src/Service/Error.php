@@ -9,7 +9,7 @@ class Error
     public string $message = 'Internal server error';
     public int $code = Response::HTTP_INTERNAL_SERVER_ERROR;
 
-    public function __construct(string $message, ?int $code)
+    public function __construct(string $message, int $code = Response::HTTP_INTERNAL_SERVER_ERROR)
     {
         $this->message = $message;
         $this->code = $code;
