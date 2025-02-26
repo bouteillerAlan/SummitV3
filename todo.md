@@ -1,4 +1,4 @@
-- [ ] edit a training
+- [x] edit a training
 - [ ] create a user
 - [ ] edit a user
 - [ ] switch to api platform >> better pagination system and so on

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Training;
 use App\Repository\TrainingRepository;
 use App\Repository\UserRepository;
+use App\Service\Error;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -68,7 +69,8 @@ final class TrainingController extends AbstractController
         $userId = $request->toArray()['user'] ?? null;
         $user = $userRepository->find($userId);
         if ($user === null) {
-            return new JsonResponse($serializer->serialize('User doesn\'t exist', 'json'), Response::HTTP_BAD_REQUEST);
+            $error = new Error('User doesn\'t exist', Response::HTTP_BAD_REQUEST);
+            return new JsonResponse($serializer->serialize($error->getObject(), 'json'), Response::HTTP_BAD_REQUEST);
         }
         $newTraining->setUser($user);
 
@@ -108,7 +110,8 @@ final class TrainingController extends AbstractController
             $userId = $request->toArray()['user'] ?? null;
             $user = $userRepository->find($userId);
             if ($user === null) {
-                return new JsonResponse($serializer->serialize('User doesn\'t exist', 'json'), Response::HTTP_BAD_REQUEST);
+                $error = new Error('User doesn\'t exist', Response::HTTP_BAD_REQUEST);
+                return new JsonResponse($serializer->serialize($error->getObject(), 'json'), Response::HTTP_BAD_REQUEST);
             }
             $updatedTraining->setUser($user);
         }
