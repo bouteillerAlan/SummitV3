@@ -16,6 +16,7 @@ final class UserFactory extends PersistentProxyObjectFactory
 
     public function __construct(UserPasswordHasherInterface $userPasswordHasher)
     {
+        parent::__construct();
         $this->userPasswordHasher = $userPasswordHasher;
     }
 
@@ -33,7 +34,7 @@ final class UserFactory extends PersistentProxyObjectFactory
         return [
             'email' => self::faker()->email(),
             'password' => self::faker()->password(),
-            'roles' => ['ROLE_USER'],
+            'roles' => [RolesEnums::ROLE_USER],
         ];
     }
 
@@ -44,10 +45,8 @@ final class UserFactory extends PersistentProxyObjectFactory
     {
         return $this
             ->afterInstantiate(function(User $user): void {
-                // hash the password
+                error_log($user->getEmail());
                 $user->setPassword($this->userPasswordHasher->hashPassword($user, $user->getPassword()));
-                // set some user to admin role
-                if (self::faker()->numberBetween(1, 100) % 3 === 0) $user->setRoles([RolesEnums::ROLE_ADMIN]);
             })
         ;
     }
