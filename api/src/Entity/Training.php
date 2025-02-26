@@ -25,6 +25,7 @@ class Training
     private ?string $name = null;
 
     #[ORM\ManyToOne(inversedBy: 'training')]
+    #[Groups(['getAllTrainings', 'getOneTraining'])]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotBlank(message: 'User is mandatory')]
     private ?User $user = null;

@@ -1,5 +1,6 @@
 - [ ] edit a training
 - [ ] create a user
 - [ ] edit a user
+- [ ] switch to api platform >> better pagination system and so on
 - [ ] check l'auth w/ jwt
 - [ ] add caching

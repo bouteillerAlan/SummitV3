@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('/training')]
@@ -67,7 +68,7 @@ final class TrainingController extends AbstractController
         $userId = $request->toArray()['user'] ?? null;
         $user = $userRepository->find($userId);
         if ($user === null) {
-            return new JsonResponse($serializer->serialize('User doesn\'t exist', 'json'), Response::HTTP_BAD_REQUEST, [], true);
+            return new JsonResponse($serializer->serialize('User doesn\'t exist', 'json'), Response::HTTP_BAD_REQUEST);
         }
         $newTraining->setUser($user);
 
@@ -76,7 +77,7 @@ final class TrainingController extends AbstractController
         $location = $urlGenerator->generate('app_training_get_one', ['id' => $newTraining->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
 
         // create the training in the db
-        $trainingRepository->createOneTraining($newTraining);
+        $trainingRepository->flushOneTraining($newTraining);
 
         return new JsonResponse($jsonTraining, Response::HTTP_CREATED, ["Location" => $location], true);
     }
@@ -91,9 +92,31 @@ final class TrainingController extends AbstractController
      * @return JsonResponse
      */
     #[Route('/{id}', name: 'app_training_update', methods: ['PUT'])]
-    public function updateOneTraining(Request $request, SerializerInterface $serializer, UserRepository $userRepository, TrainingRepository $trainingRepository, UrlGeneratorInterface $urlGenerator): JsonResponse
+    public function updateOneTraining(Request $request, SerializerInterface $serializer, Training $currentTraining, UserRepository $userRepository, TrainingRepository $trainingRepository): JsonResponse
     {
-        //
+        // get the data and populate the current training with it
+        $updatedTraining = $serializer->deserialize(
+            $request->getContent(),
+            Training::class,
+            'json',
+            [AbstractNormalizer::OBJECT_TO_POPULATE => $currentTraining]
+        );
+
+        // map the right User from the id given in request
+        if ($request->toArray()['user']) {
+            // fixme: later use the id stored in the auth
+            $userId = $request->toArray()['user'] ?? null;
+            $user = $userRepository->find($userId);
+            if ($user === null) {
+                return new JsonResponse($serializer->serialize('User doesn\'t exist', 'json'), Response::HTTP_BAD_REQUEST);
+            }
+            $updatedTraining->setUser($user);
+        }
+
+        // create the training in the db
+        $trainingRepository->flushOneTraining($updatedTraining);
+
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 
     /**

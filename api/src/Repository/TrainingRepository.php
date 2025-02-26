@@ -43,12 +43,12 @@ class TrainingRepository extends ServiceEntityRepository
     }
 
     /**
-     * create one Training
+     * create or update one Training
      * /!\ without validating by validator
      * @param Training $training
      * @return void
      */
-    public function createOneTraining(Training $training): void
+    public function flushOneTraining(Training $training): void
     {
         $this->getEntityManager()->persist($training);
         $this->getEntityManager()->flush();

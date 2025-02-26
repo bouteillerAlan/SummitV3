@@ -20,7 +20,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['getAllUsers', 'getOneUser'])]
+    #[Groups(['getAllUsers', 'getOneUser', 'getAllTrainings', 'getOneTraining'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
@@ -31,7 +31,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var RolesEnums[] The user roles
      */
-    #[ORM\Column(type: "enum", enumType: RolesEnums::class)]
+    //todo #[ORM\Column(type: "enum", enumType: RolesEnums::class)]
+    #[ORM\Column]
     #[Assert\NotBlank(message: 'Roles is mandatory')]
     #[Assert\Type(type: RolesEnums::class)]
     private array $roles = [RolesEnums::ROLE_USER];
