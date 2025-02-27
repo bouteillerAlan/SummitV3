@@ -49,3 +49,13 @@ Fixtures have been implemented so use it :)
 ```shell
 symfony console doctrine:fixtures:load
 ```
+
+## JWT
+
+You need to add the key files for the jwt to work:
+```shell
+openssl genpkey -out config/jwt/private.pem -aes256 -algorithm rsa -pkeyopt rsa_keygen_bits:4096
+openssl pkey -in config/jwt/private.pem -out config/jwt/public.pem -pubout
+```
+
+Next you need to update the `.env.local` with the password set just before, look at the `.env` for the example.
